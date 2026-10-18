@@ -791,7 +791,10 @@ void pgraph_gl_bind_shaders(PGRAPHState *pg)
 
     if (!binding->initialized && !pgraph_gl_shader_load_from_memory(binding)) {
         nv2a_profile_inc_counter(NV2A_PROF_SHADER_GEN);
+        int64_t shader_start_us = g_get_monotonic_time();
         generate_shaders(r, binding);
+        g_nv2a_stats.frame_working.shader_gen_us +=
+            (int)(g_get_monotonic_time() - shader_start_us);
         if (g_config.perf.cache_shaders) {
             pgraph_gl_shader_cache_to_disk(binding);
         }

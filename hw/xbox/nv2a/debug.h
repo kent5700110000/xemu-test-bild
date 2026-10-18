@@ -130,6 +130,11 @@ typedef struct NV2AStats {
     unsigned int increment_fps;
     struct {
         int mspf;
+        int64_t frame_interval_us;
+        int surface_update_us;
+        int renderer_flip_stall_us;
+        int shader_gen_us;
+        int tex_upload_us;
         int counters[NV2A_PROF__COUNT];
     } frame_working, frame_history[NV2A_PROF_NUM_FRAMES];
     unsigned int frame_ptr;

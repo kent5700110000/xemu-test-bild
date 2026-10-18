@@ -102,7 +102,15 @@ static void pgraph_gl_finalize(NV2AState *d)
 static void pgraph_gl_flip_stall(NV2AState *d)
 {
     NV2A_GL_DFRAME_TERMINATOR();
-    glFinish();
+
+    /*
+     * Experimental benchmark switch. Keep the default behavior unchanged.
+     * Set XEMU_SKIP_NV2A_GL_FINISH=1 to test without this synchronization.
+     */
+    const char *skip_finish = g_getenv("XEMU_SKIP_NV2A_GL_FINISH");
+    if (!skip_finish || strcmp(skip_finish, "1") != 0) {
+        glFinish();
+    }
 }
 
 static void pgraph_gl_flush(NV2AState *d)

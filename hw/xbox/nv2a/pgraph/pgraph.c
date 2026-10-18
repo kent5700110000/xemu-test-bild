@@ -901,8 +901,14 @@ DEF_METHOD(NV097, FLIP_INCREMENT_WRITE)
 DEF_METHOD(NV097, FLIP_STALL)
 {
     trace_nv2a_pgraph_flip_stall();
+    int64_t surface_update_start_us = g_get_monotonic_time();
     d->pgraph.renderer->ops.surface_update(d, false, true, true);
+    g_nv2a_stats.frame_working.surface_update_us =
+        (int)(g_get_monotonic_time() - surface_update_start_us);
+    int64_t renderer_flip_start_us = g_get_monotonic_time();
     d->pgraph.renderer->ops.flip_stall(d);
+    g_nv2a_stats.frame_working.renderer_flip_stall_us =
+        (int)(g_get_monotonic_time() - renderer_flip_start_us);
     nv2a_profile_flip_stall();
     pg->waiting_for_flip = true;
 }

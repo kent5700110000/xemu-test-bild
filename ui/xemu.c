@@ -851,7 +851,15 @@ static void gl_render_frame(struct xemu_console *scon)
     xemu_main_loop_unlock();
 
     xemu_hud_render();
-    glFinish();
+
+    /*
+     * Experimental Unreal Championship performance test.
+     * Default behavior is unchanged. Set XEMU_SKIP_UI_GL_FINISH=1
+     * to test without this synchronization point.
+     */
+    if (!g_getenv("XEMU_SKIP_UI_GL_FINISH")) {
+        glFinish();
+    }
 
     if (release_surface_texture) {
         xemu_main_loop_lock();

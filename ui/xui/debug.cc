@@ -418,6 +418,12 @@ void DebugVideoWindow::Draw()
             ImPlot::PlotLine("##mspf", &g_nv2a_stats.frame_history[0].mspf, NV2A_PROF_NUM_FRAMES, 1, x_start, 0, g_nv2a_stats.frame_ptr, sizeof(g_nv2a_stats.frame_working));
             ImPlot::Annotation(x_start, 100, ImPlot::GetLastItemColor(), ImVec2(0,0), true, "MSPF: %d", g_nv2a_stats.frame_history[(g_nv2a_stats.frame_ptr - 1) % NV2A_PROF_NUM_FRAMES].mspf);
             ImPlot::EndPlot();
+            const auto &last_frame = g_nv2a_stats.frame_history[
+                (g_nv2a_stats.frame_ptr + NV2A_PROF_NUM_FRAMES - 1)
+                % NV2A_PROF_NUM_FRAMES];
+            ImGui::Text("Surface update: %d us | Renderer flip stall: %d us",
+                        last_frame.surface_update_us,
+                        last_frame.renderer_flip_stall_us);
         }
         ImPlot::PopStyleColor();
 

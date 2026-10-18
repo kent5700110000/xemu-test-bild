@@ -19,6 +19,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "qemu/osdep.h"
 #include "qemu/fast-hash.h"
 #include "hw/xbox/nv2a/nv2a_int.h"
 #include "hw/xbox/nv2a/pgraph/swizzle.h"
@@ -426,6 +427,7 @@ static void upload_gl_texture(GLenum gl_target,
                               const uint8_t *texture_data,
                               const uint8_t *palette_data)
 {
+    int64_t texture_start_us = g_get_monotonic_time();
     ColorFormatInfo f = kelvin_color_format_gl_map[s.color_format];
     nv2a_profile_inc_counter(NV2A_PROF_TEX_UPLOAD);
 
@@ -637,6 +639,9 @@ static void upload_gl_texture(GLenum gl_target,
         assert(!"Invalid gl target texture type");
         break;
     }
+
+    g_nv2a_stats.frame_working.tex_upload_us +=
+        (int)(g_get_monotonic_time() - texture_start_us);
 }
 
 static TextureBinding* generate_texture(const TextureShape s,
